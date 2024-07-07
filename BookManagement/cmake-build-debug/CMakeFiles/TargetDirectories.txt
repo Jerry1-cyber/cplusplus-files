@@ -1,0 +1,3 @@
+D:/bit class/test.c/Book/cmake-build-debug/CMakeFiles/Book.dir
+D:/bit class/test.c/Book/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/bit class/test.c/Book/cmake-build-debug/CMakeFiles/rebuild_cache.dir
