@@ -104,6 +104,7 @@ bool Connection::clearAllManager() {
 
 bool Connection::clearAllBookInfor() {
     _bma.clear();
+    return true;
 }
 
 

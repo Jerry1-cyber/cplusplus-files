@@ -81,10 +81,10 @@ public:
 	bool operator>=(const Users& usr) const { return _username >= usr._username; }//这里设置这个函数的目的是，在BSTree中
 	//默认的greater函数只是return left < right,所以我们这里需要对<符号进行重载
 	bool operator==(const Users& usr) const { return ((_username == usr._username) && (_id == usr._id) );}
-	Users& operator=(const Users& usr) { _username = usr._username ; _id = usr._id;}
+	Users& operator=(const Users& usr) { _username = usr._username ; _id = usr._id; return *this;}
 
 	bool operator<(const Users& usr) const { return _username < usr._username;}
-	bool operator<=(const Users& usr) const { return operator<(usr) || operator=(usr); }
+	bool operator<=(const Users& usr) const { return operator<(usr) || operator==(usr); }
 	bool operator>(const Users& usr) const { return !operator<=(usr); }
 	bool borrow(BookManagement& BMa, const string& type, const string& name) const;
 	//由于书本本身的种类很少，这里没有必要再写一个搜索二叉树
