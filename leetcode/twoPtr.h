@@ -44,7 +44,7 @@
         }
         return aim;
     }
-//四叔之和
+//四数之和
 void setThreeNum(vector<vector<int>>& aim,int target,vector<int>& nums,int end)
     {
         int keyi = 0;
@@ -100,7 +100,7 @@ vector<vector<int>> fourSum(vector<int>& nums, int target) {
         }
         return aim;
     }
-//滑动窗口，同向双指针
+//滑动窗口，同向双指针，因此这里会有变化
 int minSubArrayLen(int target, vector<int>& nums) {
         int left = 0;
         int right = 0;
