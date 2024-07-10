@@ -6,7 +6,7 @@ using namespace std;
 #include "twoPtr.h"
 int main()
 {
-    vector<int> arr = {1000000000,1000000000,1000000000,1000000000};
-    vector<vector<int>> ret = fourSum(arr,0);
+    string ret = longestPalindrome(string("cccccc"));
+    cout<<ret<<endl;
     return 0;
 }
