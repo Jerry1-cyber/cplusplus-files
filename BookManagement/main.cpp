@@ -30,35 +30,79 @@ void test02() {
     con.the_connect_of_traverBSTree();
 
 }
-void testclear() {
-    Connection con;
-    con.InitBookManagement("../book.txt");
-    //通过book.txt对图书管理系统进行一个初始化
-    // int begin1 = clock();
-    // for(size_t i = 1; i < 10000;i++) {
-    //     string name = "heruijie";
-    //     string id = "123";
-    //     con.InitUser(name,id);
-    // }
-    // int end1 = clock();
-    // cout << end1 - begin1 << endl;
-    Manager& rma = con.InitManager("heruijie","123");
-    BookInfor tmp("老人与海","小说","海明威");
-    int begin1 = clock();
-    for(size_t i = 1;i < 10000;i++) {
-        rma.push(con.getManagement(),tmp._type,tmp);
+enum choice1 {
+    usr_rigiste = 1,
+    manager_rigiste,
+    Init_new_rigiste,
+    break_from_BookManagement,
+    overview,
+    cinerror,
+};
+istream& operator>>(istream& in,enum choice1& rcho) {
+    int tmp = 0;
+    in >> tmp;
+    switch(tmp) {
+        case 1:rcho = usr_rigiste;break;
+        case 2:rcho = manager_rigiste;break;
+        case 3:rcho = Init_new_rigiste;break;
+        case 4:rcho = overview;break;
+        case 5:rcho = break_from_BookManagement;break;
+        default:rcho = cinerror;break;
     }
-    int end1 = clock();
-    cout << end1 - begin1 << endl;
-    Users* ret = con.usrrigister("heruijie","23");
-    con.clearUsr(*ret);
-    int begin2 = clock();
-    const BookInfor* bi = con.search_by_usr(*ret,"小说","老人与海");
-    int end2 = clock();
-    cout << end2 - begin2 << endl;
+    return in;
+}
+void menu1() {
+    system("title BookManagerment");
+    cout << "*************************" << endl;
+    cout << "****  1.user rigiste   ***" << endl;
+    cout << "****  2.manager rigiste ***" << endl;
+    cout << "****  3.Init new user  ****" << endl;
+    cout << "****  4.overview   ********" << endl;
+    cout << "****  5.break  ************" << endl;
+    cout << "***************************" << endl;
+}
+void InitNewRigiste(Connection& con) {
+    string name,id;
+    cout << "what't your name:";
+    cin >> name;
+    cout << "the id that you want:";
+    cin >> id;
+    con.InitUser(name,id);
+    system("cls");
+    cout << "注册成功" << endl;
+    cout << "请前往登录" << endl;
+    system("pause");
+}
+void Rigiste_usr(Connection& con) {
+    string name,id;
+    cout << "your name:";
+    cin >> name;
+    cout << "your password";
+    cin >> id;
+    Users* pusr = con.usrrigister(name,id);
+    if(pusr == nullptr) {
+        cout << "this usr is not exist,please check your name and passwd" << endl;
+        return;
+    }
+    cout << "rigiste successfully"<<endl;
+    system("pause");
+    system("cls");
+
 }
 int main()
 {
-    testclear();
+    Connection con;
+    menu1();
+    enum choice1 tmp;
+    cin >> tmp;
+    system("cls");
+    switch(tmp) {
+        case usr_rigiste:Rigiste_usr(con);break;
+        case manager_rigiste:break;
+        case Init_new_rigiste:InitNewRigiste(con);break;
+        case overview:break;
+        case break_from_BookManagement:break;
+        case cinerror:break;
+    }
     return 0;
 }

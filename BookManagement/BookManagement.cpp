@@ -219,13 +219,18 @@ void SearchTree::traverBSTree() {
 }
 
 void Manager::push(BookManagement& BMa, const string& type,const BookInfor& BI) {
-	if(usersearch(BMa,type,BI._name) == nullptr) return;//如果原本就含有这本书就不会再添加
+	if(usersearch(BMa,type,BI._name) != nullptr) return;//如果原本就含有这本书就不会再添加
+
 	vector<string>::iterator it = BMa.getString().begin();
 	while(it != BMa.getString().end()) {
 		if((*it) == type) break;
 		++it;
 	}
-
+	if(it == BMa.getString().end()) {
+		BMa.getString().push_back(type);
+		BMa.getSearchTree().push_back(SearchTree());
+		it = BMa.getString().end() - 1;
+	}
     /*BMa.getSearchTree()[it - BMa.getString().begin()].push(BI);*/
 	size_t size = it - BMa.getString().begin();
 	list<SearchTree>::iterator Sit = BMa.getSearchTree().begin();
