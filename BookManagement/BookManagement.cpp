@@ -58,6 +58,48 @@ void SearchTree::push(const BookInfor& src)
 	}
 	_size++;
 }
+TreeNode* SearchTree::balanceBST(TreeNode* root) {
+	if (root == nullptr) return root;
+	root->_left = balanceBST(root->_left);
+	root->_right = balanceBST(root->_right);
+
+	// 后序处理逻辑
+	int balanceFactor = getheight(root->_left) - getheight(root->_right);
+	if (balanceFactor > 1){
+		int lblance = getheight(root->_left->_left) - getheight(root->_left->_right);
+		if (lblance < 0) root->_left = leftRotate(root->_left);
+		root = rightRotate(root);
+		return balanceBST(root);
+	}else if(balanceFactor < -1){
+		// 检查右子树
+		int rblance = getheight(root->_right->_left) - getheight(root->_right->_right);
+		if (rblance > 0) root->_right = rightRotate(root->_right);
+		root = leftRotate(root);
+		return balanceBST(root);
+	}
+	return root;
+
+
+}
+void SearchTree::BalanceBST() {
+	_head = balanceBST(_head);
+}
+TreeNode* SearchTree::leftRotate(TreeNode* root){
+	if (root == nullptr || root->_right == nullptr) return root;
+	TreeNode* right = root->_right;
+	TreeNode* rightLeft = root->_right->_left;
+	root->_right = rightLeft;
+	right->_left = root;
+	return right;
+}
+TreeNode* SearchTree::rightRotate(TreeNode* root) {
+	if (root == nullptr || root->_left == nullptr) return root;
+	TreeNode* left = root->_left;
+	TreeNode* leftRight = root->_left->_right;
+	root->_left = leftRight;
+	left->_right = root;
+	return left;
+}
 bool SearchTree::pop(const string& name)
 {
 	_size--;

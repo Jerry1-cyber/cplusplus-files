@@ -13,6 +13,8 @@
 #include <list>
 #include <fstream>
 #include "BSTree.h"
+
+
 void setpos(int x, int y);
 void slideconsor();
 enum system {
@@ -50,7 +52,19 @@ public:
 	const BookInfor* search(const string& name) const;//由于这里的查找函数我们
 	//没有提供修改的权限，所以这里返回的指针是const修饰的
 	//这里由于如果没有找到，返回一个nullptr,这也是这里我们将指针作为返回值的原因
+
 	void traverBSTree();//深度优先遍历二叉树
+	int getheight(TreeNode* root) const {
+		if(root == nullptr) return 0;
+		return std::max(getheight(root->_left),getheight(root->_right)) + 1;
+	}
+	TreeNode* leftRotate(TreeNode* root);//左旋
+
+	TreeNode* rightRotate(TreeNode* root);//右旋
+
+
+	TreeNode* balanceBST(TreeNode* root);
+	void  BalanceBST();//平衡二叉树AVL树
 	void Destroy();
 	~SearchTree() { Destroy(); }
 private:
