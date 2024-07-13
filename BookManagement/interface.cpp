@@ -21,6 +21,11 @@ bool Connection::InitBookManagement(const string& rpos)
         _bma.pushnewtype(tmp._type);
         _mroot.push(_bma, tmp._type, tmp);
     }
+    std::list<SearchTree>::iterator it = _bma.getSearchTree().begin();
+    while(it != _bma.getSearchTree().end()) {
+        (*it).BalanceBST();
+        it++;
+    }//在文件初始化完成之后转换为平衡二叉树AVL树
     return true;
 }
 Users& Connection::InitUser(const string& name, const string& id)
