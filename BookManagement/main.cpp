@@ -18,7 +18,7 @@ void test01()
 void test02() {
     Connection con;
     con.InitBookManagement("../book.txt");
-    // const BookInfor* tmp = con.search_by_usr(con.getRoot(),"小说","《高老头》");
+    // const BookInfor* tmp = con.search_by_usr(con.ge；。tRoot(),"小说","《高老头》");
     // cout << *tmp << endl;
     // Users& usr1 = con.InitUser("heruijie","1882");
     // con.usrborrow(usr1,"小说","《高老头》");
@@ -27,7 +27,18 @@ void test02() {
     // const BookInfor* cpbi = con.search_by_usr(usr1,"小说","老人与海");
     // if(!cpbi) cout << "没有这本书" << endl;
     // else cout << *cpbi <<endl;
-    con.the_connect_of_traverBSTree();
+
+    Manager& rma = con.InitManager("heruijie","123");
+    Manager* pma = con.Marigister("heruijie","123");
+    if(pma == nullptr) cout << "查无此人" << endl;
+    else cout << "确有此人" << endl;
+    Users& rusr = con.InitUser("heruijie","123");
+    Users* pusr = con.usrrigister("heruijie","123");
+    if(pusr == nullptr) cout << "查无此人" << endl;
+    else cout << "确有此人" << endl;
+    con.clearAllBookInfor();
+    bool ret = con.clearManager(rma);
+    ret = con.clearUsr(rusr);
 
 }
 // enum choice1 {

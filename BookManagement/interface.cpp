@@ -21,7 +21,7 @@ bool Connection::InitBookManagement(const string& rpos)
         _bma.pushnewtype(tmp._type);
         _mroot.push(_bma, tmp._type, tmp);
     }
-    std::list<SearchTree>::iterator it = _bma.getSearchTree().begin();
+    std::list<BSTree>::iterator it = _bma.getSearchTree().begin();
     while(it != _bma.getSearchTree().end()) {
         (*it).BalanceBST();
         it++;
@@ -70,7 +70,8 @@ Manager* Connection::Marigister(const string& name, const string& id)
     }
 
     if (it == _vMa.end()) return nullptr;
-    return &_vMa[it - _vMa.begin()];
+    // return &_vMa[it - _vMa.begin()];
+    return &(*it);
 }
 Users* Connection::usrrigister(const string& name, const string& id)
 {

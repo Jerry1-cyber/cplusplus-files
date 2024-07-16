@@ -29,7 +29,7 @@ struct BookInfor {
 	string _name;
 	string _type;
 	string _writer;
-	enum system _system;//状态，是否被借阅
+	enum system _system = ::in;//状态，是否被借阅
 	friend ostream& operator<<(ostream& out, const BookInfor& rbi);
 };
 ostream& operator<<(ostream& out, const BookInfor& rbi);
@@ -41,9 +41,9 @@ struct TreeNode {
 		TreeNode* right = nullptr):_val(val),_left(left),_right(right)
 	{}
 };//建立搜索二叉树的结构
-class SearchTree {//我们将名字作为key来进行搜索二叉树的建立
+class BSTree {//我们将名字作为key来进行搜索二叉树的建立
 public:
-	SearchTree() :_head(nullptr), _size(0) {}
+	BSTree() :_head(nullptr), _size(0) {}
 
 
 	void set(TreeNode* root, TreeNode* newnode);//通过_name作为key建立搜索二叉树
@@ -64,9 +64,9 @@ public:
 
 
 	TreeNode* balanceBST(TreeNode* root);
-	void  BalanceBST();//平衡二叉树AVL树
+	void  BalanceBST();//平衡二叉树AVL树,将我们建立的搜索二叉树进行平衡化
 	void Destroy();
-	~SearchTree() { Destroy(); }
+	~BSTree() { Destroy(); }
 private:
 	TreeNode* _head;
 	size_t _size;
@@ -75,14 +75,14 @@ private:
 class BookManagement {
 public:
 	const vector<string>& getString() const { return _vstr; }
-	const list<SearchTree>& getSearchTree() const { return _vST; }
+	const list<BSTree>& getSearchTree() const { return _vST; }
 	vector<string>& getString() { return _vstr; };
-	list<SearchTree>& getSearchTree() { return _vST; }
+	list<BSTree>& getSearchTree() { return _vST; }
 	void pushnewtype(const string& type);
 	void traverBSTree_by_type();
 	bool clear();//清除里面的所有的内容
 private:
-	list<SearchTree> _vST;//搜索二叉树数组
+	list<BSTree> _vST;//搜索二叉树数组
 	vector<string> _vstr;//类型数组，他的下标和二叉树中对应的类型匹配
 };
 class Users {
@@ -115,10 +115,9 @@ public:
 	Manager(string username = string(),string id = string()):
 		Users(username,id)
 	{}
-
 	virtual void push(BookManagement& BMa,const string& type,const BookInfor& BI);
 	virtual void pop(BookManagement& BMa,const string& type,const string& name);//push和pop是Manager独有的权限
-	bool operator==(const Manager& rma) { return _username == rma._username && _id == rma._username; }
+	bool operator==(const Manager& rma) { return _username == rma._username && _id == rma._id; }
 protected:
 };
 

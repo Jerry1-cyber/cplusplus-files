@@ -14,7 +14,7 @@ void slideconsor()
 	Cursor_Infor.bVisible = false;
 	SetConsoleCursorInfo(handle, &Cursor_Infor);
 }
-void SearchTree::set(TreeNode* root, TreeNode* newnode)
+void BSTree::set(TreeNode* root, TreeNode* newnode)
 {
 	/*if (root->_left == nullptr && root->_val._name >= newnode->_val._name)
 	{
@@ -49,7 +49,7 @@ void SearchTree::set(TreeNode* root, TreeNode* newnode)
 		else sk.push(head->_right);
 	}
 }
-void SearchTree::push(const BookInfor& src)
+void BSTree::push(const BookInfor& src)
 {
 	TreeNode* newnode = new TreeNode(src);
 	if (_head == nullptr) _head = newnode;
@@ -58,7 +58,7 @@ void SearchTree::push(const BookInfor& src)
 	}
 	_size++;
 }
-TreeNode* SearchTree::balanceBST(TreeNode* root) {
+TreeNode* BSTree::balanceBST(TreeNode* root) {
 	if (root == nullptr) return root;
 	root->_left = balanceBST(root->_left);
 	root->_right = balanceBST(root->_right);
@@ -81,10 +81,10 @@ TreeNode* SearchTree::balanceBST(TreeNode* root) {
 
 
 }
-void SearchTree::BalanceBST() {
+void BSTree::BalanceBST() {
 	_head = balanceBST(_head);
 }
-TreeNode* SearchTree::leftRotate(TreeNode* root){
+TreeNode* BSTree::leftRotate(TreeNode* root){
 	if (root == nullptr || root->_right == nullptr) return root;
 	TreeNode* right = root->_right;
 	TreeNode* rightLeft = root->_right->_left;
@@ -92,7 +92,7 @@ TreeNode* SearchTree::leftRotate(TreeNode* root){
 	right->_left = root;
 	return right;
 }
-TreeNode* SearchTree::rightRotate(TreeNode* root) {
+TreeNode* BSTree::rightRotate(TreeNode* root) {
 	if (root == nullptr || root->_left == nullptr) return root;
 	TreeNode* left = root->_left;
 	TreeNode* leftRight = root->_left->_right;
@@ -100,7 +100,7 @@ TreeNode* SearchTree::rightRotate(TreeNode* root) {
 	left->_right = root;
 	return left;
 }
-bool SearchTree::pop(const string& name)
+bool BSTree::pop(const string& name)
 {
 	_size--;
 	TreeNode* parent = nullptr;
@@ -157,7 +157,7 @@ bool SearchTree::pop(const string& name)
 	}
 	return false;
 }
-const BookInfor* SearchTree::search(const string& name) const
+const BookInfor* BSTree::search(const string& name) const
 {
 	TreeNode* cur = _head;
 	while (cur)
@@ -187,7 +187,7 @@ void BookManagement::pushnewtype(const string& type)
 	_vST.resize(_vST.size() + 1);
 }
 void BookManagement::traverBSTree_by_type() {
-	list<SearchTree>::iterator it = _vST.begin();
+	list<BSTree>::iterator it = _vST.begin();
 	vector<string>::iterator _it = _vstr.begin();
 	while(it != _vST.end()) {
 		cout << *_it <<endl;
@@ -197,7 +197,7 @@ void BookManagement::traverBSTree_by_type() {
 	}
 
 }
-void SearchTree::Destroy() {
+void BSTree::Destroy() {
 	TreeNode* head = _head;
 	if (head == nullptr) return;
 	stack<TreeNode*> sk;
@@ -211,14 +211,18 @@ void SearchTree::Destroy() {
 		delete root;
 		root = nullptr;
 	}
+	_head = nullptr;
+	_size = 0;
 }
 bool BookManagement::clear() {
 	if(_vstr.size() == 0) return true;
-	list<SearchTree>::iterator it = _vST.begin();
+	list<BSTree>::iterator it = _vST.begin();
 	while(it != _vST.end()) {
 		(*it).Destroy();
 		++it;
 	}
+	_vstr.clear();
+	_vST.clear();
 	return true;
 }
 
@@ -234,7 +238,7 @@ const string& name) const
 	if (it == BMa.getString().end()) return nullptr;//如果找不到那个种类，就返回空指针
 	/*return BMa.getSearchTree()[it - BMa.getString().begin()].search(name);*/
 	size_t size = it - BMa.getString().begin();
-	list<SearchTree>::const_iterator const_it = BMa.getSearchTree().begin();
+	list<BSTree>::const_iterator const_it = BMa.getSearchTree().begin();
 	while (size)
 	{
 		++const_it;
@@ -242,7 +246,7 @@ const string& name) const
 	}
 	return (*const_it).search(name);
 }
-void SearchTree::traverBSTree() {
+void BSTree::traverBSTree() {
 	if(_head == nullptr) perror("your BSTree don't have any information");
 	stack<TreeNode*> sk;
 	sk.push(_head);
@@ -270,12 +274,12 @@ void Manager::push(BookManagement& BMa, const string& type,const BookInfor& BI) 
 	}
 	if(it == BMa.getString().end()) {
 		BMa.getString().push_back(type);
-		BMa.getSearchTree().push_back(SearchTree());
+		BMa.getSearchTree().push_back(BSTree());
 		it = BMa.getString().end() - 1;
 	}
     /*BMa.getSearchTree()[it - BMa.getString().begin()].push(BI);*/
 	size_t size = it - BMa.getString().begin();
-	list<SearchTree>::iterator Sit = BMa.getSearchTree().begin();
+	list<BSTree>::iterator Sit = BMa.getSearchTree().begin();
 	while (size)
 	{
 		++Sit;
@@ -294,7 +298,7 @@ void Manager::pop(BookManagement& BMa, const string& type,const string& name)
 	}
 
 	size_t size = it - BMa.getString().begin();
-	list<SearchTree>::iterator Sit = BMa.getSearchTree().begin();
+	list<BSTree>::iterator Sit = BMa.getSearchTree().begin();
 	while (size)
 	{
 		++Sit;
