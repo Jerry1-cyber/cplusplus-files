@@ -28,18 +28,19 @@ void test02() {
     // if(!cpbi) cout << "没有这本书" << endl;
     // else cout << *cpbi <<endl;
 
-    Manager& rma = con.InitManager("heruijie","123");
-    Manager* pma = con.Marigister("heruijie","123");
-    if(pma == nullptr) cout << "查无此人" << endl;
-    else cout << "确有此人" << endl;
-    Users& rusr = con.InitUser("heruijie","123");
-    Users* pusr = con.usrrigister("heruijie","123");
-    if(pusr == nullptr) cout << "查无此人" << endl;
-    else cout << "确有此人" << endl;
-    con.clearAllBookInfor();
-    bool ret = con.clearManager(rma);
-    ret = con.clearUsr(rusr);
-
+    // Manager& rma = con.InitManager("heruijie","123");
+    // Manager* pma = con.Marigister("heruijie","123");
+    // if(pma == nullptr) cout << "查无此人" << endl;
+    // else cout << "确有此人" << endl;
+    // Users& rusr = con.InitUser("heruijie","123");
+    // Users* pusr = con.usrrigister("heruijie","123");
+    // if(pusr == nullptr) cout << "查无此人" << endl;
+    // else cout << "确有此人" << endl;
+    // con.clearAllBookInfor();
+    // bool ret = con.clearManager(rma);
+    // ret = con.clearUsr(rusr);
+    vector<BookInfor> vbi;
+    con.getAllBookInfor(vbi);
 }
 // enum choice1 {
 //     usr_rigiste = 1,

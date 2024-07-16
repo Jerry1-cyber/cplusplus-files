@@ -29,6 +29,7 @@ public:
     bool clearAllManager();
     bool clearAllBookInfor();//清除所有的图书的内容
     BookManagement& getManagement() { return _bma; }
+    vector<BookInfor>& getAllBookInfor(vector<BookInfor>& rvbi);
 private:
     BookManagement _bma;//直接建立一个图书馆管理系统
     mystl::BSTree<Users> _lur;

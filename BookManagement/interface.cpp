@@ -112,6 +112,10 @@ bool Connection::clearAllBookInfor() {
     _bma.clear();
     return true;
 }
+vector<BookInfor> &Connection::getAllBookInfor(vector<BookInfor> &rvbi) {
+    _bma.pushAllBookInfor(rvbi);
+    return rvbi;
+}
 
 
 

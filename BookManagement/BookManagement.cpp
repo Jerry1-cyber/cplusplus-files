@@ -313,3 +313,23 @@ bool Users::borrow(BookManagement& BMa, const string& type, const string& name) 
 	ret->_system = leave;
 	return true;
 }
+bool BookManagement::pushAllBookInfor(vector<BookInfor> &rvbi) {
+	list<BSTree>::iterator it = _vST.begin();
+	while(it != _vST.end()) {
+		(*it).pushAllBookInfor(rvbi);
+		++it;
+	}
+	return true;
+}
+bool BSTree::pushAllBookInfor(vector<BookInfor> &rvbi) {
+	pushAllBookInforHelper(rvbi,_head);
+	return true;
+}
+void BSTree::pushAllBookInforHelper(vector<BookInfor> &rvbi, TreeNode *root) {
+	if(root == nullptr) return;
+	BSTree::pushAllBookInforHelper(rvbi,root->_left);
+	rvbi.push_back(root->_val);
+	BSTree::pushAllBookInforHelper(rvbi,root->_right);
+}
+
+

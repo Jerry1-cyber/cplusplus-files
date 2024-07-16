@@ -61,8 +61,8 @@ public:
 	TreeNode* leftRotate(TreeNode* root);//左旋
 
 	TreeNode* rightRotate(TreeNode* root);//右旋
-
-
+	void pushAllBookInforHelper(vector<BookInfor>& rvbi,TreeNode* root);
+	bool pushAllBookInfor(vector<BookInfor>& rvbi);
 	TreeNode* balanceBST(TreeNode* root);
 	void  BalanceBST();//平衡二叉树AVL树,将我们建立的搜索二叉树进行平衡化
 	void Destroy();
@@ -80,6 +80,7 @@ public:
 	list<BSTree>& getSearchTree() { return _vST; }
 	void pushnewtype(const string& type);
 	void traverBSTree_by_type();
+	bool pushAllBookInfor(vector<BookInfor>& rvbi);
 	bool clear();//清除里面的所有的内容
 private:
 	list<BSTree> _vST;//搜索二叉树数组
