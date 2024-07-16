@@ -170,7 +170,7 @@ const BookInfor* BSTree::search(const string& name) const
 }
 ostream& operator<<(ostream& out, const BookInfor& rbi)
 {
-	out << "书名：" << rbi._name << "  类型：" << rbi._type << "  作者：" << rbi._type;
+	out << "书名：" << rbi._name << "  类型：" << rbi._type << "  作者：" << rbi._writer;
 	if (rbi._system == in)
 		out << "  该书未被借走";
 	else
@@ -330,6 +330,13 @@ void BSTree::pushAllBookInforHelper(vector<BookInfor> &rvbi, TreeNode *root) {
 	BSTree::pushAllBookInforHelper(rvbi,root->_left);
 	rvbi.push_back(root->_val);
 	BSTree::pushAllBookInforHelper(rvbi,root->_right);
+}
+void BookManagement::getBalance() {
+	list<BSTree>::iterator it = _vST.begin();
+	while(it != _vST.end()) {
+		(*it).BalanceBST();
+		++it;
+	}
 }
 
 

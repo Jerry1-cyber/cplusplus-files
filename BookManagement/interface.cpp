@@ -116,6 +116,10 @@ vector<BookInfor> &Connection::getAllBookInfor(vector<BookInfor> &rvbi) {
     _bma.pushAllBookInfor(rvbi);
     return rvbi;
 }
+void Connection::balanceBST() {
+    _bma.getBalance();
+}
+
 
 
 

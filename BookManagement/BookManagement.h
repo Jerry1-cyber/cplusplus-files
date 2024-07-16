@@ -82,6 +82,7 @@ public:
 	void traverBSTree_by_type();
 	bool pushAllBookInfor(vector<BookInfor>& rvbi);
 	bool clear();//清除里面的所有的内容
+	void getBalance();
 private:
 	list<BSTree> _vST;//搜索二叉树数组
 	vector<string> _vstr;//类型数组，他的下标和二叉树中对应的类型匹配

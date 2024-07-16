@@ -18,10 +18,10 @@ public:
     bool pop_old_book(Manager& rma,const string& type,const string& name);//书籍的删除
     bool usrborrow(const Users& usr, const string& type, const string& name);//借阅书籍的函数,由于这里Manager是Users的额继承
     //因此这里传递Manager的权限也是可以实现书本的借阅的,返回一个布尔值表示借阅是否成功
-    size_t usersize() const { return _lur.size(); }//用户的人数
-    size_t Managersize() const { return _vMa.size(); }//返回的是Manager的个数
+    std::size_t usersize() const { return _lur.size(); }//用户的人数
+    std::size_t Managersize() const { return _vMa.size(); }//返回的是Manager的个数
     void the_connect_of_traverBSTree();//二叉树的中序遍历,以及深度优先遍历
-    Manager& getRoot() {return _mroot; }
+    Manager& getRoot() { return _mroot; }
     bool clearUsr(const Users& rusr);//这两个接口是用户通过登录或注册获得自己的应用或者是指针，
     //在这里他有删除自己的权限,也可以理解为注销
     bool clearManager(const Manager& rma);//返回false就是没有该用户
@@ -30,6 +30,7 @@ public:
     bool clearAllBookInfor();//清除所有的图书的内容
     BookManagement& getManagement() { return _bma; }
     vector<BookInfor>& getAllBookInfor(vector<BookInfor>& rvbi);
+    void balanceBST();
 private:
     BookManagement _bma;//直接建立一个图书馆管理系统
     mystl::BSTree<Users> _lur;
