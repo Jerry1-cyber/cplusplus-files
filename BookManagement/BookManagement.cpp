@@ -311,13 +311,13 @@ bool Users::borrow(BookManagement& BMa, const string& type, const string& name)
 {
 	BookInfor* ret = const_cast<BookInfor*>(usersearch(BMa, type, name));
 	setBookPtr(ret);
-	if(ret->_system == in) return false;
+	if(ret->_system == leave) return false;
 	ret->_system = leave;
 	return true;
 }
 bool Users::retBook(BookManagement& bma) {
 	BookInfor* ret = const_cast<BookInfor*>(usersearch(bma,_borrow->_type,_borrow->_name));
-	ret->_system = leave;
+	ret->_system = in;
 	return true;
 }
 bool BookManagement::pushAllBookInfor(vector<BookInfor> &rvbi) {
