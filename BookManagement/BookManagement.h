@@ -102,15 +102,18 @@ public:
 	bool operator<(const Users& usr) const { return _username < usr._username;}
 	bool operator<=(const Users& usr) const { return operator<(usr) || operator==(usr); }
 	bool operator>(const Users& usr) const { return !operator<=(usr); }
-	bool borrow(BookManagement& BMa, const string& type, const string& name) const;
+	bool borrow(BookManagement& BMa, const string& type, const string& name);
+	bool retBook(BookManagement& bma);
 	//由于书本本身的种类很少，这里没有必要再写一个搜索二叉树
 	//这里我觉得这里加上type这个接口你们的图形化好些一点
 	virtual void push(BookManagement& BMa, const string& type, const BookInfor& BI) {};
 	virtual void pop(BookManagement& BMa, const string& type, const string& name) {};
 	bool operator==(const Users& usr) { return _username == usr._username && _id == usr._id;}
+	void setBookPtr(const BookInfor* pbi) { _borrow = pbi; }
 protected:
 	string _username;
 	string _id;
+	const BookInfor* _borrow = nullptr;
 };
 class Manager :public Users {
 public:

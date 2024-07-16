@@ -16,7 +16,8 @@ public:
     const BookInfor* search_by_usr(const Users& usr,const string& type,const string& name);//通过调用可以获得书籍的指针，没有就会返回空指针
     bool push_new_book(Manager& rma,const BookInfor& rbi);//管理员权限,书籍的增加，可以直接调用_mroot权限
     bool pop_old_book(Manager& rma,const string& type,const string& name);//书籍的删除
-    bool usrborrow(const Users& usr, const string& type, const string& name);//借阅书籍的函数,由于这里Manager是Users的额继承
+    bool usrborrow(Users& usr, const string& type, const string& name);//借阅书籍的函数,由于这里Manager是Users的额继承
+    bool returnBook(Users& usr);
     //因此这里传递Manager的权限也是可以实现书本的借阅的,返回一个布尔值表示借阅是否成功
     std::size_t usersize() const { return _lur.size(); }//用户的人数
     std::size_t Managersize() const { return _vMa.size(); }//返回的是Manager的个数

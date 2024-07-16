@@ -15,60 +15,60 @@ void test01()
     bst.push("heruihie");
     bst.push("heruihie");
 }
-void test02() {
-    Connection con;
-    con.InitBookManagement("../book.txt");
-    // const BookInfor* tmp = con.search_by_usr(con.ge；。tRoot(),"小说","《高老头》");
-    // cout << *tmp << endl;
-    // Users& usr1 = con.InitUser("heruijie","1882");
-    // con.usrborrow(usr1,"小说","《高老头》");
-    // tmp = con.search_by_usr(con.getRoot(),"小说","《高老头》");
-    // cout<<*tmp<<endl;
-    // const BookInfor* cpbi = con.search_by_usr(usr1,"小说","老人与海");
-    // if(!cpbi) cout << "没有这本书" << endl;
-    // else cout << *cpbi <<endl;
-
-    // Manager& rma = con.InitManager("heruijie","123");
-    // Manager* pma = con.Marigister("heruijie","123");
-    // if(pma == nullptr) cout << "查无此人" << endl;
-    // else cout << "确有此人" << endl;
-    // Users& rusr = con.InitUser("heruijie","123");
-    // Users* pusr = con.usrrigister("heruijie","123");
-    // if(pusr == nullptr) cout << "查无此人" << endl;
-    // else cout << "确有此人" << endl;
-    // con.clearAllBookInfor();
-    // bool ret = con.clearManager(rma);
-    // ret = con.clearUsr(rusr);
-    // Manager& rma = con.InitManager("heruijie","123");
-    // enum { size = 10000, };
-    //
-    //     BookInfor tmp;
-    //     tmp._name = "000000";
-    //     tmp._writer = "何锐杰";
-    //     tmp._type = "小说";
-    // int begin = clock();
-    //     for(size_t m = 0;m < 10;m++) {
-    //         for(size_t n = 0;n < 10;n++) {
-    //             for(size_t k = 0;k < 10;k++) {
-    //
-    //                 for(size_t l = 0;l < 10;l++) {
-    //                     tmp._name[0] = m +'0';
-    //                     tmp._name[1] = n + '0';
-    //                     tmp._name[2] = k + '0';
-    //                     tmp._name[3] = l + '0';
-    //
-    //                     con.push_new_book(rma,tmp);
-    //                 }
-    //             }
-    //
-    //         }
-    //     }
-    // con.balanceBST();
-    // int end = clock();
-    // cout << end - begin << endl;
-    // const BookInfor* pbi = con.search_by_usr(rma,"小说","555500");
-    // if(pbi) cout << *pbi << endl;
-}
+// void test02() {
+//     Connection con;
+//     con.InitBookManagement("../book.txt");
+//     // const BookInfor* tmp = con.search_by_usr(con.ge；。tRoot(),"小说","《高老头》");
+//     // cout << *tmp << endl;
+//     // Users& usr1 = con.InitUser("heruijie","1882");
+//     // con.usrborrow(usr1,"小说","《高老头》");
+//     // tmp = con.search_by_usr(con.getRoot(),"小说","《高老头》");
+//     // cout<<*tmp<<endl;
+//     // const BookInfor* cpbi = con.search_by_usr(usr1,"小说","老人与海");
+//     // if(!cpbi) cout << "没有这本书" << endl;
+//     // else cout << *cpbi <<endl;
+//
+//     // Manager& rma = con.InitManager("heruijie","123");
+//     // Manager* pma = con.Marigister("heruijie","123");
+//     // if(pma == nullptr) cout << "查无此人" << endl;
+//     // else cout << "确有此人" << endl;
+//     // Users& rusr = con.InitUser("heruijie","123");
+//     // Users* pusr = con.usrrigister("heruijie","123");
+//     // if(pusr == nullptr) cout << "查无此人" << endl;
+//     // else cout << "确有此人" << endl;
+//     // con.clearAllBookInfor();
+//     // bool ret = con.clearManager(rma);
+//     // ret = con.clearUsr(rusr);
+//     // Manager& rma = con.InitManager("heruijie","123");
+//     // enum { size = 10000, };
+//     //
+//     //     BookInfor tmp;
+//     //     tmp._name = "000000";
+//     //     tmp._writer = "何锐杰";
+//     //     tmp._type = "小说";
+//     // int begin = clock();
+//     //     for(size_t m = 0;m < 10;m++) {
+//     //         for(size_t n = 0;n < 10;n++) {
+//     //             for(size_t k = 0;k < 10;k++) {
+//     //
+//     //                 for(size_t l = 0;l < 10;l++) {
+//     //                     tmp._name[0] = m +'0';
+//     //                     tmp._name[1] = n + '0';
+//     //                     tmp._name[2] = k + '0';
+//     //                     tmp._name[3] = l + '0';
+//     //
+//     //                     con.push_new_book(rma,tmp);
+//     //                 }
+//     //             }
+//     //
+//     //         }
+//     //     }
+//     // con.balanceBST();
+//     // int end = clock();
+//     // cout << end - begin << endl;
+//     // const BookInfor* pbi = con.search_by_usr(rma,"小说","555500");
+//     // if(pbi) cout << *pbi << endl;
+// }
 // enum choice1 {
 //     usr_rigiste = 1,
 //     manager_rigiste,
@@ -128,8 +128,20 @@ void test02() {
 //     system("cls");
 //
 // }
+void test() {
+    Connection con;
+    con.InitBookManagement("../book.txt");
+    Users& usr = con.InitUser("heruijie","123");
+    bool ret = con.usrborrow(usr,"小说","《唐·吉诃德》");
+    const BookInfor* tmp = con.search_by_usr(usr,"小说","《唐·吉诃德》");
+    cout << *tmp << endl;
+
+    ret = con.returnBook(usr);
+    tmp = con.search_by_usr(usr,"小说","《唐·吉诃德》");
+    cout << *tmp << endl;
+}
 int main()
 {
-    test02();
+    test();
     return 0;
 }
