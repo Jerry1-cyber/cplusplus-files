@@ -39,7 +39,9 @@ namespace mycode {
             std::cout << root->_val << " ";
             inOrder(root->_right);
         }
+        bool erase(const T& val);
         ~BSTree(){ clear(_root); _root = nullptr; _size = 0; }
+
     private:
         Node* _root;
         size_t _size;
@@ -131,5 +133,10 @@ namespace mycode {
         return false;
 
     }
+    template<class T,class Compare>
+    bool BSTree<T,Compare>::erase(const T& val) {
+        //2024/7/22 今天不太想写这个了，下次再写
+    }
+
 }
 #endif //BSTREE_H
