@@ -37,9 +37,11 @@ namespace mycode {
         Node* getRoot() { return _root; }
         void RotateLeft(Node* parent);
         void RotateRight(Node* parent);
-        void RotateAll(Node* parent);//提供一份通用的Rotate的旋转的模版
+        void insertRotateAll(Node* parent);//提供一份通用的Rotate的旋转的模版
+        void eraseRotateAll(Node* parent);
         void clear(Node* root);
         bool insert(const pair<K,V>& kv);
+        bool erase(const pair<K,V>& kv);
         void inorderHelper(Node* root) const {
             if(root == nullptr) return;
             inorderHelper(root->_left);
@@ -92,7 +94,7 @@ namespace mycode {
             }else if(parent->_bf == -2 || parent->_bf == 2) {
                 //进行旋转
                 //分为左旋 + 右旋 + 先左旋后右旋 + 先右旋后左旋
-                RotateAll(parent);
+                insertRotateAll(parent);
                 break;
             }else assert(false);//断言结束
         }
@@ -121,7 +123,7 @@ namespace mycode {
         if(tmp) {
             if(parent == tmp->_left) tmp->_left = rightChild;
             else tmp->_right = rightChild;
-        }
+        }else _root = rightChild;//这个位置也很重要，更新root节点别忘了
         parent->_bf = rightChild->_bf = 0;
     }
     template<class K, class V, class Compare>
@@ -137,7 +139,7 @@ namespace mycode {
         if(tmp) {
             if(parent == tmp->_left) tmp->_left = leftChild;
             else tmp->_right = leftChild;
-        }
+        }else _root = leftChild;
         parent->_bf = leftChild->_bf = 0;
     }
     template <class K,class V,class Compare>
@@ -149,7 +151,7 @@ namespace mycode {
         _size = 0;
     }
     template <class K,class V,class Compare>
-    void AVLTree<K,V,Compare>::RotateAll(Node* parent) {
+    void AVLTree<K,V,Compare>::insertRotateAll(Node* parent) {
         if(parent->_bf == 2 && parent->_right->_bf == 1)
             RotateLeft(parent);//左单旋
         else if(parent->_bf == -2 && parent->_left->_bf == -1)
@@ -177,11 +179,128 @@ namespace mycode {
             else if(bfOfLCChild == -1) parent->_right->_bf = 1;
             else assert(false);
         }
-        Node* rootparent = _root->_parent;//这里还需要更新一下root
-        while(rootparent) {
-            _root = _root->_parent;
-            rootparent = rootparent->_parent;
+
+    }
+    template<class K,class V,class Compare>
+    void AVLTree<K,V,Compare>::eraseRotateAll(Node* parent) {
+        if(parent->_bf == 2) {
+            if(parent->_right->_bf == 0) {
+                RotateLeft(parent);
+                parent->_bf = 1;
+                parent->_parent->_bf = -1;
+            }
+            else if(parent->_right->_bf == 1) RotateLeft(parent);
+            else if(parent->_right->_bf == -1) {
+                int balanceFactor = parent->_right->_left->_bf;
+                RotateRight(parent->_right);
+                RotateLeft(parent);
+                parent = parent->_parent;
+                if(balanceFactor == 1) parent->_left->_bf = -1;
+                else if(balanceFactor == -1) parent->_right->_bf = 1;
+            }else assert(false);
+        }else {
+            if(parent->_left->_bf == 0) {
+                RotateRight(parent);
+                parent->_bf = -1;
+                parent->_parent->_bf = 1;
+            }else if(parent->_left->_bf == -1) RotateRight(parent);
+            else if(parent->_left->_bf == 1) {
+                int balanceFactor = parent->_left->_right->_bf;
+                RotateLeft(parent->_left);
+                RotateRight(parent);
+                parent = parent->_parent;
+                if(balanceFactor == 1) parent->_left->_bf = -1;
+                else if(balanceFactor == -1) parent->_right->_bf = 1;
+            }else assert(false);
         }
+    }
+
+    template<class K,class V,class Compare>
+    bool AVLTree<K,V,Compare>::erase(const pair<K,V>& kv) {
+        PosfromAVLTree position;
+        Node* cur = _root;
+        if(cur == nullptr) return false;
+        while(true) {
+            if(cur == nullptr) return false;
+            else if(_cmp(kv.first,cur->_kv.first)) cur = cur->_left;
+            else if(_cmp(cur->_kv.first,kv.first)) cur = cur->_right;
+            else {//找到了删除的位置
+                //这里分为单孩子，双孩子
+                if(cur->_parent == nullptr) position = AVLleft;
+                else if(cur == cur->_parent->_left) position = AVLleft;
+                else position = AVLright;
+                Node* del = nullptr;
+                Node* parent = nullptr;//删除位置的父亲节点
+                if(cur->_left == nullptr && cur->_right == nullptr) {
+                    if(cur->_parent) {
+                        parent = cur->_parent;
+                        if(cur == cur->_parent->_left) cur->_parent->_left = nullptr;
+                        else cur->_parent->_right = nullptr;
+                    }else _root = nullptr;
+                    del = cur;
+                }//叶子结点
+                else if(cur->_left == nullptr || cur->_right == nullptr) {
+                    parent = cur->_parent;
+                    Node* child = cur->_left == nullptr ? cur->_right : cur->_left;
+                    child->_parent = cur->_parent;
+                    if(cur->_parent) {
+                        if(cur == cur->_parent->_left) cur->_parent->_left = child;
+                        else cur->_parent->_right = child;
+                    }else _root = child;
+                    del = cur;
+                }else {//这里就是涉及到了两个孩子节点的问题
+
+                    Node* rightMin = cur->_right;//这里我们需要找到右子树的最小的节点
+                    while(rightMin->_left) {
+                        rightMin = rightMin->_left;
+                    }
+                    parent = rightMin->_parent;//实际上两个孩子的情况下，我们其实是删除的是rightMin
+                    cur->_kv = rightMin->_kv;
+                    // rightMin->_right->_parent = rightMin->_parent;
+                    if(rightMin->_right) rightMin->_right->_parent = rightMin->_parent;
+                    if(rightMin == rightMin->_parent->_left) {
+                        rightMin->_parent->_left = \
+                        rightMin->_right;
+                        position = AVLleft;
+                    }
+                    else {
+                        rightMin->_parent->_right = rightMin->_right;
+                        position = AVLright;
+                    }
+                    del = rightMin;
+                }
+                assert(del);
+                delete del;
+                //更新平衡因子
+                while(parent) {
+                    if(position == AVLleft) ++parent->_bf;
+                    else --parent->_bf;
+                    if(parent->_bf == 1 || parent->_bf == -1) break;
+                    //由于删除后变成了-1或者+1，说明AVL树的平衡性没有收到影响
+                    else if(parent->_bf == 0) {
+                        if(parent->_parent == nullptr) break;
+                        else if(parent == parent->_parent->_left) position = AVLleft;
+                        else position = AVLright;
+                        parent = parent->_parent;
+                    }
+                    else if(parent->_bf == 2 || parent->_bf == -2) {
+                        eraseRotateAll(parent);
+                        parent = parent->_parent;
+                        if(parent->_parent == nullptr) break;
+                        else if(parent == parent->_parent->_left) position = AVLleft;
+                        else position = AVLright;
+                        parent = parent->_parent;
+                    }else assert(false);//到这里说明程序错误了
+                }
+                Node* rootParent = _root->_parent;
+                while(rootParent) {
+                    _root = rootParent;
+                    rootParent = rootParent->_parent;
+                }
+                break;
+            }
+        }
+        return true;
     }
 
 
