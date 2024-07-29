@@ -12,23 +12,24 @@ namespace mycode {
         left,
         right,
     };
-    template<class T>
+    template<class T,class V>//这里改成了key / value 模型
     struct BSTreeNode {
         T _val;
-        BSTreeNode<T>* _left;
-        BSTreeNode<T>* _right;
-        BSTreeNode(const T& val = T(),BSTreeNode<T>* left = nullptr,BSTreeNode<T>* right = nullptr):\
-    _val(val),_left(left),_right(right){};
+        V _value;
+        BSTreeNode<T,V>* _left;
+        BSTreeNode<T,V>* _right;
+        BSTreeNode(const T& val = T(),const V& value = V(),BSTreeNode<T,V>* left = nullptr,BSTreeNode<T,V>* right = nullptr):\
+    _value(value),_val(val),_left(left),_right(right){};
     };
-    template<class T,class Compare = std::less<T>>
+    template<class T,class V,class Compare = std::less<T>>
     class BSTree {
     public:
-        typedef BSTreeNode<T> Node;
+        typedef BSTreeNode<T,V> Node;
         explicit BSTree():_root(nullptr),_size(0){}
         Node* getRoot() { return _root; }
         void clear(Node* root);//这里为什么要单独调用getRoot(),这是因为这里还来不及调用this指针
 
-        bool push(const T& val);
+        bool push(const T& val,const V& va);
         bool pop(const T& val);
         size_t size() const { return _size; }
         bool empty() const { return _root == nullptr; }
@@ -47,17 +48,17 @@ namespace mycode {
         size_t _size;
         Compare cmp;//创建仿函数可以方便整个类进行调用
     };
-    template<class T,class Compare>
-    void BSTree<T,Compare>::clear(Node* root) {
+    template<class T,class V,class Compare>
+    void BSTree<T,V,Compare>::clear(Node* root) {
         if(root == nullptr) return;
         clear(root->_left);
         clear(root->_right);
         delete root;
         root = nullptr;
     }
-    template<class T,class Compare>
-    bool BSTree<T,Compare>::push(const T& val){
-        ::mycode::PosfromBSTree position = ::mycode::left;
+    template<class T,class V,class Compare>
+    bool BSTree<T,V,Compare>::push(const T& val,const V& va){
+        ::mycode::PosfromBSTree position = ::mycode::PosfromBSTree::left;
         Node* parent = nullptr;
         Node* cur = _root;
         if(cur == nullptr) {
@@ -68,21 +69,22 @@ namespace mycode {
             if(cmp(val,cur->_val)) {
                 parent = cur;
                 cur = cur->_left;
-                position = ::mycode::left;
+                position = ::mycode::PosfromBSTree::left;
             }else if(cmp(cur->_val,val)) {
                 parent = cur;
                 cur = cur->_right;
-                position = ::mycode::right;
+                position = ::mycode::PosfromBSTree::right;
             }
             else return false;
         }
-        cur = new Node(val);
-        if(position == left) parent->_left = cur;
+        cur = new Node(val,va);
+        if(position == ::mycode::PosfromBSTree::left) parent->_left = cur;
         else parent->_right = cur;
+        _size++;
         return true;
     }
-    template<class T,class Compare>
-    bool BSTree<T,Compare>::pop(const T& val){
+    template<class T,class V,class Compare>
+    bool BSTree<T,V,Compare>::pop(const T& val){
         Node* parent = nullptr;
         Node* cur = _root;
         if(cur == nullptr) return false;
@@ -133,10 +135,16 @@ namespace mycode {
         return false;
 
     }
-    template<class T,class Compare>
-    bool BSTree<T,Compare>::erase(const T& val) {
-        //2024/7/22 今天不太想写这个了，下次再写
+    template<class T,class V,class Compare>
+    typename BSTree<T,V,Compare>::Node* BSTree<T,V,Compare>::Find(const T& src) {
+        Node* cur = _root;;
+        if(cur == nullptr) return nullptr;//如果什么都没有肯定就是直接返回的是NULL
+        while(cur) {
+            if(cmp(src,cur->_val)) cur = cur->_left;
+            else if(cmp(cur->_val,src)) cur = cur->_right;
+            else return cur;
+        }
+        return nullptr;
     }
-
 }
 #endif //BSTREE_H
