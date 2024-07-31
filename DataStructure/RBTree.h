@@ -9,32 +9,78 @@ using std::vector;
 #include <iostream>
 using std::size;
 using std::pair;
+using std::cin;
+using std::cout;
+using std::endl;
+
 namespace mycode {
     enum Color {
         Red,
         Black,
     };
-    template <class K,class V>
+    template <class data>
     struct RBTreeNode {
-        RBTreeNode(const std::pair<K,V>& kv,RBTreeNode<K,V>* left = nullptr\
-            ,RBTreeNode<K,V>* right = nullptr,RBTreeNode<K,V>* parent = nullptr):\
+        RBTreeNode(const data& kv,RBTreeNode<data>* left = nullptr\
+            ,RBTreeNode<data>* right = nullptr,RBTreeNode<data>* parent = nullptr):\
         _kv(kv),_left(left),_right(right),_parent(parent)
         {}
         Color _col = Black;
-        std::pair<K,V> _kv;
-        RBTreeNode<K,V>* _left;
-        RBTreeNode<K,V>* _right;
-        RBTreeNode<K,V>* _parent;
+        data _kv;
+        RBTreeNode<data>* _left;
+        RBTreeNode<data>* _right;
+        RBTreeNode<data>* _parent;
     };
-    template <class K,class V,class Compare = std::less<K>>
+    template <class data,class Node,class Ptr>
+    struct RBTreeIterator {
+        typedef RBTreeIterator<data,Node,Ptr> Self;
+
+        Node* _cur;
+        explicit RBTreeIterator(Node* cur):_cur(cur){}
+        explicit RBTreeIterator(const RBTreeIterator<data,Node,Ptr>& rbt) { _cur = rbt._cur; }
+        bool operator!=(const Self& it) { return _cur != it._cur; }
+        Self& operator=(const Self& it) { _cur = it._cur; return *this; }
+        Node& operator*() { return *_cur; }
+        Node* operator->() { return _cur; }
+        Self& operator++() {
+            Node* cur = _cur;
+            if(cur->_right) {
+                cur = cur->_right;
+                while(cur->_left) { cur = cur->_left; }
+                _cur = cur;
+            }else {
+                while(cur) {
+                    if(cur->_parent && cur == cur->_parent->_left) {
+                        _cur = cur->_parent;
+                        return *this;
+                    }else cur = cur->_parent;
+                }
+            }
+            _cur = cur;
+            return *this;
+        }
+    };
+    template <class K,class V,class KOfT,class Compare = std::less<K>>
     class RBTree {
     public:
-        typedef RBTreeNode<K,V> Node;
+
+        typedef RBTreeNode<V> Node;
+        typedef RBTreeIterator<V,Node,Node*> iterator;
+        typedef RBTreeIterator<V,const Node,const Node*> const_iterator;
         size_t size() const { return _size; }
         void RotateLeft(Node* parent);
         void RotateRight(Node* parent);
-        bool insert(const pair<K,V>& kv);
+        bool insert(const V& kv);
+        // bool erase(const K& val);
         Node* getRoot() { return _root; }
+        iterator begin() {
+            Node* cur = _root;
+            if(cur == nullptr) return iterator(nullptr);
+            while(cur->_left) {
+                cur = cur->_left;
+            }
+            return iterator(cur);
+        }
+        iterator end() { return iterator(nullptr);}
         pair<bool,int> isTheRightRBTree(Node* root) {
             if(root == nullptr) return std::make_pair(true,1);
             pair<bool,int> lhs = isTheRightRBTree(root->_left);
@@ -48,6 +94,15 @@ namespace mycode {
                 return { true,rhs.second};
             }else return { true,rhs.second + 1};
         }
+        const_iterator begin() const {
+            Node* cur = _root;
+            if(cur == nullptr) return iterator(nullptr);
+            while(cur->_left) {
+                cur = cur->_left;
+            }
+            return iterator(cur);
+        }
+        const_iterator end() const { return const_iterator(nullptr); }
         void inorderHelper(Node* root,vector<Node*>& sk) {
             if(root == nullptr) {
                 int blackSize = 0;
@@ -78,9 +133,10 @@ namespace mycode {
         Node* _root = nullptr;
         std::size_t _size = 0;
         Compare _cmp;
+        KOfT _koft;
     };
-    template <class K,class V,class Compare>
-    bool RBTree<K,V,Compare>::insert(const pair<K,V>& kv) {
+    template <class K,class V,class KOfT,class Compare>
+    bool RBTree<K,V,KOfT,Compare>::insert(const V& kv) {
 
         enum RBDirct {
             left,
@@ -90,17 +146,17 @@ namespace mycode {
         Node* parent = nullptr;
         Node* cur = _root;
         if(cur == nullptr) {
-            _root = new RBTreeNode<K,V>(kv);
+            _root = new RBTreeNode<V>(kv);
             _size++;
             return true;
         }
         while(cur) {
             parent = cur;
-            if(_cmp(kv.first,cur->_kv.first)) {
+            if(_cmp(_koft(kv),_koft(cur->_kv))) {
                 cur = cur->_left;
                 rb_dirct = left;
             }
-            else if(_cmp(cur->_kv.first,kv.first)) {
+            else if(_cmp(_koft(cur->_kv),_koft(kv))) {
                 cur = cur->_right;
                 rb_dirct = right;
             }
@@ -223,8 +279,46 @@ namespace mycode {
         // }
         return true;
     }
-    template<class K, class V, class Compare>
-    void RBTree<K, V, Compare>::RotateLeft(Node *parent) {
+    // template <class K,class V,class KOfT,class Compare>
+    // bool RBTree<K,V,KOfT,Compare>::erase(const K& val) {
+    //     Node* cur = _root;
+    //     if(_root == nullptr) return false;
+    //     while(cur) {
+    //         if(_cmp(val,cur->_kv.first)) cur = cur->_left;
+    //         else if(_cmp(cur->_kv.first,val))cur = cur->_right;
+    //         else break;
+    //     }
+    //     if(cur == nullptr) return false;//由于cur是因为nullptr而退出的时候就说明我们没有找到
+    //     Node* parent = cur->_parent;
+    //     //删除分为双孩子和非双孩子
+    //     if(cur->_left == nullptr || cur->_right == nullptr) {
+    //         Node* child = cur->_left == nullptr ? cur->_right : cur->_left;
+    //         if(parent) {
+    //             if(cur == parent->_left) parent->_left = child;
+    //             else parent->_right = child;
+    //         }else _root = child;
+    //         if(child) child->_parent = parent;
+    //         delete cur;
+    //         cur = child;
+    //     }else {
+    //         Node* rightMin = cur->_right;
+    //         while(rightMin->_left) {
+    //             rightMin = rightMin->_left;
+    //         }//找到后继结点
+    //         cur->_kv = rightMin->_kv;//从这里开始实际上就是删除rightMin节点
+    //         parent = rightMin->_parent;
+    //         Node* child = rightMin->_right;
+    //
+    //         if(rightMin == parent->_left) parent->_left = child;
+    //         else parent->_right = child;
+    //         if(child) child->_parent = parent;
+    //         delete rightMin;
+    //         cur = child;
+    //     }
+    //
+    // }
+    template<class K, class V,class KOfT, class Compare>
+    void RBTree<K, V,KOfT, Compare>::RotateLeft(Node *parent) {
         //左旋的原理
         //由于某个根节点的平衡因子本身处于1的状态，这个时候如果我们在右子树进行push的时候
         //平衡被打破，进行右旋，将rightChild的left作为parent的rightchild并且将parent作为
@@ -247,8 +341,8 @@ namespace mycode {
             else tmp->_right = rightChild;
         }else _root = rightChild;//这个位置也很重要，更新root节点别忘了
     }
-    template<class K, class V, class Compare>
-    void RBTree<K, V, Compare>::RotateRight(Node *parent) {
+    template<class K, class V,class KOfT, class Compare>
+    void RBTree<K, V,KOfT, Compare>::RotateRight(Node *parent) {
         Node* tmp = parent->_parent;
         Node* leftChild = parent->_left;
         Node* lCRightChild = leftChild->_right;

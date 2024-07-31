@@ -268,8 +268,9 @@ namespace mycode {
                 dirct = AVLleft;
             }
             if(minRight->_right) minRight->_right->_parent = beginParent;//链接成功
-
+            delete minRight;
         }
+
         //删除成功开始实现平衡的旋转
         while(beginParent) {
             if(dirct == AVLleft) ++beginParent->_bf;
@@ -509,9 +510,4 @@ void testKeyValueTree() {
 }
 
 //将0~99用AVL树的结构显示出来
-int main() {
-
-    testKeyValueTree();
-    return 0;
-}
 #endif //AVLTREE_H
