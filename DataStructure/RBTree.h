@@ -33,14 +33,13 @@ namespace mycode {
     template <class data,class Node,class Ptr>
     struct RBTreeIterator {
         typedef RBTreeIterator<data,Node,Ptr> Self;
-
-        Node* _cur;
+        Ptr _cur;
         explicit RBTreeIterator(Node* cur):_cur(cur){}
         explicit RBTreeIterator(const RBTreeIterator<data,Node,Ptr>& rbt) { _cur = rbt._cur; }
         bool operator!=(const Self& it) { return _cur != it._cur; }
         Self& operator=(const Self& it) { _cur = it._cur; return *this; }
         Node& operator*() { return *_cur; }
-        Node* operator->() { return _cur; }
+        Ptr operator->() { return _cur; }
         Self& operator++() {
             Node* cur = _cur;
             if(cur->_right) {
@@ -96,11 +95,17 @@ namespace mycode {
         }
         const_iterator begin() const {
             Node* cur = _root;
-            if(cur == nullptr) return iterator(nullptr);
+            if(cur == nullptr) return const_iterator(nullptr);
             while(cur->_left) {
                 cur = cur->_left;
             }
-            return iterator(cur);
+            return const_iterator(cur);
+        }
+        bool insert(const std::initializer_list<V>& il) {
+            for(auto& e: il) {
+                this->insert(e);
+            }
+            return true;
         }
         const_iterator end() const { return const_iterator(nullptr); }
         void inorderHelper(Node* root,vector<Node*>& sk) {
