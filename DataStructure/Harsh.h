@@ -4,9 +4,7 @@
 
 #ifndef HARSH_H
 #define HARSH_H
-#include <iostream>
-#include <vector>
-using namespace std;
+using std::hash;
 // namespace mycode {
 //     enum system {
 //         EXIST,
@@ -104,7 +102,8 @@ namespace Harsh_bucket {//拉链法实现哈希桶
 
     template <class V>
     struct HarshDataType {
-        HarshDataType(const V& kv = V()):_kv(kv){}
+        HarshDataType(V&& kv = V()):_kv(kv){}
+
         V _kv;
         HarshDataType<V>* _next =  nullptr;
     };
@@ -116,9 +115,7 @@ namespace Harsh_bucket {//拉链法实现哈希桶
         typedef HarshIterator<K,V,KOfT,Harsh>& Self;
         HarshIterator(HarshTable<K,V,KOfT,Harsh>* tablePtr,Node* node,size_t harsh):_tablePtr(tablePtr),_node(node),_harsh(harsh){}
 
-        HarshTable<K,V,KOfT,Harsh>* _tablePtr;
-        Node* _node;//存储当前的节点
-        size_t _harsh = 0;
+
         Self operator++() {
             if(_node->_next) {
                 _node = _node->_next;
@@ -135,13 +132,23 @@ namespace Harsh_bucket {//拉链法实现哈希桶
         bool operator!=(const HarshIterator<K,V,KOfT,Harsh>& it){ return _node != it._node; }
         V& operator*() { return _node->_kv; }
         V* operator->() { return &(_node->_kv); }
+
+        HarshTable<K,V,KOfT,Harsh>* _tablePtr;
+        Node* _node;//存储当前的节点
+        size_t _harsh = 0;
     };
     template <class K,class V,class KOfT,class Harsh>
     struct HarshConstIterator {
         typedef HarshDataType<V> Node;
         typedef const HarshConstIterator<K,V,KOfT,Harsh>& Self;
         HarshConstIterator(HarshTable<K,V,KOfT,Harsh>* tablePtr,Node* node,size_t harsh):_tablePtr(tablePtr),_node(node),_harsh(harsh){}
-        HarshConstIterator(const HarshIterator<K,V,KOfT,Harsh>& it) {
+        HarshConstIterator(HarshIterator<K,V,KOfT,Harsh>&& it) {
+            _node = it._node;
+            _tablePtr = it._tablePtr;
+            _harsh = it._harsh;
+        }
+        HarshConstIterator(HarshConstIterator<K,V,KOfT,Harsh>&& it)//拷贝构造
+        {
             _node = it._node;
             _tablePtr = it._tablePtr;
             _harsh = it._harsh;
@@ -162,7 +169,7 @@ namespace Harsh_bucket {//拉链法实现哈希桶
             else _node = (*_tablePtr)._table[_harsh];
             return *this;
         }
-        bool operator!=(const HarshConstIterator<K,V,KOfT,Harsh>& it){ return _node != it._node; }
+        bool operator!=(const HarshConstIterator<K,V,KOfT,Harsh>& it) const { return _node != it._node; }
         const V& operator*() { return _node->_kv; }
         const V* operator->() { return &(_node->_kv); }
     };
@@ -173,6 +180,7 @@ namespace Harsh_bucket {//拉链法实现哈希桶
     template <class K,class V,class KOfT,class Harsh>
     class HarshTable {
     public:
+        HarshTable(HarshTable&& hb) = default;//这里在底层调用vector的右值赋值重载
         friend struct HarshIterator<K,V,KOfT,Harsh>;
         friend struct HarshConstIterator<K,V,KOfT,Harsh>;
         typedef HarshDataType<V>* Ptr;
@@ -187,7 +195,7 @@ namespace Harsh_bucket {//拉链法实现哈希桶
                 Ptr cur = e;
                 while(cur) {
                     Ptr next = cur->_next;
-                    size_t harsh = _harsh(_koft(cur->_kv)) % tmp._table.size();
+                    size_t harsh = _harsh(_koft(std::forward<V>(cur->_kv))) % tmp._table.size();
                     if(tmp._table[harsh] == nullptr) {
                         tmp._table[harsh] = cur;
                         cur->_next = nullptr;
@@ -204,12 +212,12 @@ namespace Harsh_bucket {//拉链法实现哈希桶
 
         }
 
-        pair<iterator,bool> insert(const V& kv) {
+        pair<iterator,bool> insert(V&& kv) {
 
-            iterator it = find(_koft(kv));
+            iterator it = find(std::forward<K>((_koft(std::forward<V>(kv)))));
             if(it != end()) return make_pair(it,false);
-            int harsh = _harsh(_koft(kv)) % _table.size();
-            Ptr newnode = new HarshDataType(kv);
+            int harsh = _harsh(std::forward<K>(_koft(std::forward<V>(kv)))) % _table.size();
+            Ptr newnode = new HarshDataType(std::forward<V>(kv));
             if(_table[harsh] == nullptr) _table[harsh] = newnode;
             else {
                 newnode->_next = _table[harsh];
@@ -217,7 +225,7 @@ namespace Harsh_bucket {//拉链法实现哈希桶
             }
             _size++;
             if((_size * 10) / _table.size() >= 10) insertHelper();
-            return make_pair(iterator(this,newnode,_harsh(_koft(kv)) % _table.size()),true);
+            return make_pair(iterator(this,newnode,_harsh(_koft(std::forward<V>(kv))) % _table.size()),true);
         }
         ~HarshTable() {
             for(auto& e : _table) {
@@ -230,16 +238,16 @@ namespace Harsh_bucket {//拉链法实现哈希桶
                e = nullptr;
             }
         }
-        iterator find(const K& key) {
+        iterator find(K&& key) {
             size_t harsh = _harsh(key) % _table.size();
             Ptr cur = _table[harsh];
             while(cur) {
-                if(cur->_kv.first == key) return iterator(this,cur,harsh);
+                if(_koft(std::forward<V>(cur->_kv)) == key) return iterator(this,cur,harsh);
                 cur = cur->_next;
             }
             return iterator(this,nullptr,_table.size());
         }
-        bool erase(const K& key){
+        bool erase(K&& key){
             if(find(key) == nullptr) return false;
             size_t harsh = _harsh(key) % _table.size();
             Ptr cur = _table[harsh];
