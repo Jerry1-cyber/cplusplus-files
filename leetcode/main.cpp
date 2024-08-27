@@ -1,12 +1,7 @@
-#include <iostream>
-using namespace std;
-#include <vector>
-#include <list>
-#include <algorithm>
-#include "twoPtr.h"
+#include "findSubstring.h"
+
 int main()
 {
-    string ret = longestPalindrome(string("cccccc"));
-    cout<<ret<<endl;
+    test();
     return 0;
 }
