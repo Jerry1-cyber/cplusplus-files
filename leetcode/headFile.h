@@ -32,4 +32,5 @@ using std::greater;
 using std::string;
 using std::min;
 using std::max;
+using std::make_pair;
 #endif //LEETCODE_HEADFILE_H
